@@ -56,6 +56,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         changeDiffuseContentsOpacity(CGFloat(sender.value))
     }
     
+    @IBAction func changeYAxis(_ sender: UISlider) {
+        plane.extentNode.eulerAngles.y = sender.value
+    }
+    
+    
     private func changeDiffuseContentsColor(_ color: UIColor) {
         guard let material = plane.meshNode.geometry?.firstMaterial else {
             assertionFailure("ARSCNPlaneGeometry always has one material")
@@ -73,6 +78,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             materiall.diffuse.contents = color
         }
     }
+    
+    
     
     private func changeDiffuseContentsOpacity(_ value: CGFloat) {
         DispatchQueue.main.async {
