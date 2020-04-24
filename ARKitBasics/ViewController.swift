@@ -15,6 +15,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @IBOutlet weak var sessionInfoView: UIView!
     @IBOutlet weak var sessionInfoLabel: UILabel!
     @IBOutlet weak var sceneView: ARSCNView!
+    
+    var plane: Plane!
 
     // MARK: - View Life Cycle
 
@@ -45,6 +47,46 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Pause the view's AR session.
         sceneView.session.pause()
     }
+    
+    @IBAction func changeColor(_ sender: UIButton) {
+        changeDiffuseContentsColor(randomColor())
+    }
+    
+    @IBAction func changeOpacity(_ sender: UISlider) {
+        changeDiffuseContentsOpacity(CGFloat(sender.value))
+    }
+    
+    private func changeDiffuseContentsColor(_ color: UIColor) {
+        guard let material = plane.meshNode.geometry?.firstMaterial else {
+            assertionFailure("ARSCNPlaneGeometry always has one material")
+            return
+        }
+        DispatchQueue.main.async {
+            material.diffuse.contents = color
+        }
+        
+        guard let materiall = plane.extentNode.geometry?.firstMaterial else {
+            assertionFailure("SCNPlane always has one material")
+            return
+        }
+        DispatchQueue.main.async {
+            materiall.diffuse.contents = color
+        }
+    }
+    
+    private func changeDiffuseContentsOpacity(_ value: CGFloat) {
+        DispatchQueue.main.async {
+            self.plane.meshNode.opacity = value
+            self.plane.extentNode.opacity = value
+        }
+    }
+    
+    func randomColor() -> UIColor {
+        return UIColor(red: .random(in: 0...1),
+                       green: .random(in: 0...1),
+                       blue: .random(in: 0...1),
+                       alpha: 1.0)
+    }
 
     // MARK: - ARSCNViewDelegate
     
@@ -54,7 +96,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
         
         // Create a custom object to visualize the plane geometry and extent.
-        let plane = Plane(anchor: planeAnchor, in: sceneView)
+        plane = Plane(anchor: planeAnchor, in: sceneView)
         
         // Add the visualization to the ARKit-managed node so that it tracks
         // changes in the plane anchor as plane estimation continues.
