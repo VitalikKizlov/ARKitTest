@@ -58,6 +58,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     @IBAction func changeYAxis(_ sender: UISlider) {
         plane.extentNode.eulerAngles.y = sender.value
+        plane.meshNode.eulerAngles.y = sender.value
     }
     
     
